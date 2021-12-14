@@ -27,14 +27,14 @@
         
 		$dbPassword = getenv("WOODZIP_DB_PASSWORD",true);
 		$dbName = getenv("WOODZIP_DB");
-		$dbUsername = getenv("WOODZIP_DB_USERNAME",true);
-   
-		$conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
-   
-        print_r("$dbPassword  $dbName $dbUsername are the values and new pass = $newPass");
-        */
+		$dbUsername = getenv("WOODZIP_DB_USERNAME",true); */
 
-        $conn = mysqli_connect("localhost", "root", "", "devis_woodzip");
+        $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
+
+        //print_r("$dbPassword  $dbName $dbUsername are the values and new pass = $newPass");
+
+
+        // $conn = mysqli_connect("localhost", "root", "", "devis_woodzip");
 
         // Check connection
         if ($conn === false) {
@@ -52,11 +52,14 @@
         $pays = $_REQUEST['pays'];
         $question = $_REQUEST['question'];
         $authorisation = $_REQUEST['authorisation'];
+        $telephone = $_REQUEST['telephone'];
 
         $bardages = $_REQUEST['bardages'];
         $enduits = $_REQUEST['enduits'];
         $terrasse = $_REQUEST['terrasse'];
         $garage = $_REQUEST['garage'];
+        $totalCost = $_REQUEST['totalCost'];
+        $totalCostTVA = $_REQUEST['totalCostTVA'];
 
         $terrasse_val = $terrasse === 'true' ? 1 : 0;
         $garage_val = $garage === 'true' ? 1 : 0;
@@ -66,18 +69,60 @@
         if ($authorisation === "on") {
 
             $sql = "INSERT INTO devis(prenom,
-                nom,addresse_elec,addresse,code_postal,pays,question,bardages,enduits,garage,terrasse) VALUES ('$prenom',
-                    '$nom','$addresse_elec','$addresse','$code_postal','$pays','$question','$bardages','$enduits',$garage_val,$terrasse_val)";
+                nom,addresse_elec,addresse,telephone,code_postal,pays,question,bardages,enduits,garage,terrasse) VALUES ('$prenom',
+                    '$nom','$addresse_elec','$addresse','$telephone','$code_postal','$pays','$question','$bardages','$enduits',$garage_val,$terrasse_val)";
 
             if (mysqli_query($conn, $sql)) {
                 echo '<div class="alert-popup success"> Votre demande a été soumise avec succès </div>';
+                $garage_text = $garage === 'true' ? "Oui" : "Non";
+                $terrasse_text = $terrasse === 'true' ? "Oui" : "Non";
+                $to = "lionel.chouraqui@meolia.fr";
+                $subject = "Devis WOODZIP";
+
+                $message = '<html><body>';
+                $message .= '<h1 style="margin-bottom:25px;">Devis Woodzip</h1>';
+                $message .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
+                $message .= "<tr style='background: #eee;'><td><strong>Nom et prenoms</strong> </td><td>" . $nom . " " . $prenom . "</td></tr>";
+                $message .= "<tr><td><strong>Adresse electronique:</strong> </td><td>" . $addresse_elec . "</td></tr>";
+                $message .= "<tr><td><strong>Adresse:</strong> </td><td>" . $addresse . "</td></tr>";
+                $message .= "<tr><td><strong>Numéro de téléphone:</strong> </td><td>" . strval($telephone) . "</td></tr>";
+                $message .= "<tr><td><strong>Code postal:</strong> </td><td>" . $code_postal . "</td></tr>";
+                $message .= "<tr><td><strong>Pays:</strong> </td><td>" . $pays . "</td></tr>";
+                $message .= "<tr><td><strong>Question/Remarques:</strong> </td><td>" . htmlentities($question) . "</td></tr>";
+                $message .= "<tr><td><strong>Revêtemement principal:</strong> </td><td> Enduit " . $enduits . "</td></tr>";
+                $message .= "<tr><td><strong>Revêtemement secondaire:</strong> </td><td> Bardage " . $bardages . "</td></tr>";
+                $message .= "<tr><td><strong>Terrasse:</strong> </td><td>" . $terrasse_text . "</td></tr>";
+                $message .= "<tr><td><strong>Garage:</strong> </td><td>" . $garage_text . "</td></tr>";
+                $message .= "<tr><td><strong>Coût total (T.V.A excl):</strong> </td><td><strong>€ " .  strval($totalCost) . "</strong></td></tr>";
+                $message .= "<tr><td><strong>Coût total (T.V.A incl):</strong> </td><td><strong>€ " . strval($totalCostTVA) . "</strong></td></tr>";
+
+                $message .= "</table>";
+                $message .= "</body></html>";
+
+
+                $header = "From:lionel.chouraqui@meolia.fr \r\n";
+                $header .= "Cc:lionel.chouraqui@meolia.fr \r\n";
+                $header .= "MIME-Version: 1.0\r\n";
+                $header .= "Content-type: text/html\r\n";
+
+                $headers .= "Organization: WOODZIP\r\n";
+                $headers .= "X-Priority: 3\r\n";
+                $headers .= "X-Mailer: PHP" . phpversion() . "\r\n";
+
+                $retval = mail($to, $subject, $message, $header);
+
+                if ($retval == true) {
+                    echo "Message envoyé avec succès...";
+                } else {
+                    echo "Le message n'a pas pu etre envoyé...";
+                }
                 header("Location: https://www.woodzip.com/");
                 exit();
             } else {
                 echo '<div class="alert-popup failed"> Une erreur s\'est produite lors du traitement de votre demande </div>';
             }
         } else {
-            echo "You have not authorized this action";
+            echo '<div class="alert-popup failed"> Vous n\'avez pas authorisé cet action </div>';
         }
 
 
@@ -98,7 +143,7 @@
 
         <form class="devis-form" method="post" action="<?= htmlentities($_SERVER['PHP_SELF']); ?>">
 
-            
+
 
             <h1>Demander un devis</h1>
 
@@ -108,21 +153,21 @@
 
             <p class="config-vals">
                 Revêtement principal : <strong>
-                     <?php
-                     if(isset($_POST['enduits'])){
-                      echo 'Enduit '.$_POST['enduits'] ;
+                    <?php
+                    if (isset($_POST['enduits'])) {
+                        echo 'Enduit ' . $_POST['enduits'];
                     }
-                      
-                      ?> 
-                    </strong>
+
+                    ?>
+                </strong>
             </p>
             <p class="config-vals">
-                Revêtemement secondaire : <strong> <?php if(isset($_POST['bardages'])) echo 'Bardage '.$_POST['bardages'] ?> </strong>
+                Revêtemement secondaire : <strong> <?php if (isset($_POST['bardages'])) echo 'Bardage ' . $_POST['bardages'] ?> </strong>
             </p>
             <p class="config-vals">
-                Options choisies :  <strong>
-                     <?php if( isset($_POST['terrasse']) && $_POST['terrasse']==='true') echo "Terrasse" ?> 
-                     <?php if (isset($_POST['garage']) && $_POST['garage']==='true') echo ' et Garage' ?>
+                Options choisies : <strong>
+                    <?php if (isset($_POST['terrasse']) && $_POST['terrasse'] === 'true') echo "Terrasse" ?>
+                    <?php if (isset($_POST['garage']) && $_POST['garage'] === 'true') echo ' et Garage' ?>
                 </strong>
             </p>
 
@@ -136,12 +181,16 @@
                 <input type="text" id="nom" name="nom" placeholder="Entrez votre nom" required>
             </p>
             <p>
-                <label class="required" for="addresse_elec">Addresse électronique</label>
+                <label class="required" for="addresse_elec">Adresse électronique</label>
                 <input type="text" id="addresse_elec" name="addresse_elec" placeholder="Entrez votre Addresse Electronique" required>
             </p>
             <p>
-                <label class="required" for="addresse">Addresse</label>
+                <label class="required" for="addresse">Adresse</label>
                 <input type="text" id="addresse" name="addresse" placeholder="Rue, numéro et lieu" required>
+            </p>
+            <p>
+                <label class="required" for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone" placeholder="Numéro de téléphone" required>
             </p>
             <p>
                 <label class="required" for="code_postal">Code postal</label>
@@ -162,7 +211,7 @@
             </p>
 
             <p>
-                <label for="authorisation">
+                <label for="authorisation" class="authorisation">
                     <input type="checkbox" title="Authorisation de stockage des données" name="authorisation" id="authorisation" required>
                     Par la présente, j'autorise le stockage de mes données
                 </label>
@@ -177,6 +226,8 @@
             $enduits = $_POST['enduits'];
             $terrasse = $_POST['terrasse'];
             $garage = $_POST['garage'];
+            $totalCost = $_POST['totalCost'];
+            $totalCostTVA = $_POST['totalCostTVA'];
 
             if (isset($bardages)) {
                 echo '<input hidden type="text" name="bardages" value="' . $bardages . '"/>';
@@ -189,6 +240,12 @@
             }
             if (isset($garage)) {
                 echo '<input hidden type="text" name="garage" value="' . $garage . '"/>';
+            }
+            if (isset($totalCost)) {
+                echo '<input hidden type="text" name="totalCost" value="' . strval($totalCost) . '"/>';
+            }
+            if (isset($totalCostTVA)) {
+                echo '<input hidden type="text" name="totalCostTVA" value="' . strval($totalCostTVA) . '"/>';
             }
 
 

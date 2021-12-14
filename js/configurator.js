@@ -326,6 +326,8 @@ var Configurator = {
       enduits: availableTextures.enduits[this.currentEnduits]["name"],
       terrasse: this.nodes.find((node) => node.name === "Terrasse").selected,
       garage: this.nodes.find((node) => node.name == "Garage").selected,
+      totalCost:this.totalCostWithoutTVA,
+      totalCostTVA:this.totalCostWithTVA() 
     };
 
     for (key of Object.keys(formData)) {

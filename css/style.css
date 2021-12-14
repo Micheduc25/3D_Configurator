@@ -110,14 +110,20 @@ body{
     padding: 10px 20px;
 }
 
-.config-item div:first-child{
+.config-item a, .detail-upper a{
+    text-decoration: none;
+    color:black;
+    font-weight: bold;
+}
+
+.config-item a:first-child{
     display:flex;
     cursor:pointer;
 }
 
-.config-item div:first-child span:first-child{
+/* .config-item a:first-child span:first-child{
     margin-right: 20px;
-}
+} */
 
 .config-details{
     display: flex;
@@ -130,13 +136,13 @@ body{
     
 }
 
-.detail-upper div:first-child{
+.detail-upper a:first-child{
     display: flex;
     cursor:pointer;
 }
-.detail-upper div:first-child span:first-child{
+/* .detail-upper a:first-child span:first-child{
     margin-right: 20px;
-}
+} */
 .detail-lower{
     /* text-align: right; */
     display:flex;
@@ -202,19 +208,21 @@ body{
     border-radius:10px;
     background-color:#eee;
     margin-left:auto;
+    margin-top:5px;
     height: auto;
-    max-height: 0;
+    display:none;
+    /* max-height: 0;
     overflow:hidden;
     
-    transition:all .2s ease-in;
+    transition:all .2s ease-in; */
 }
 .toggle-tva.show{
     max-height: 45px;
-    margin-top:10px;
+    margin-top:15px;
 }
 
 .toggle-tva button{
-    padding:12px 10px;
+    padding:8px 10px;
     border-radius: 10px;
     transition:all .3s ease-in;
     background-color: #eee;
@@ -267,7 +275,7 @@ body{
 .config-devis{
     display: flex;
     justify-content: space-between;
-    padding:10px 20px 20px;
+    padding:0 20px 20px;
 }
 
 .config-devis a{
@@ -358,7 +366,7 @@ body{
     left:-100%;
     top:100px;
     background-color: black;
-    z-index: 60;
+    z-index: 1060;
     color:white;
     width:100%;
     transition: .3s;
@@ -622,6 +630,8 @@ body{
 
     .hconfig-menu{
         top:0;
+        max-height: unset;
+        height:100vh;
     }
     .logo{
         margin: 10px 0 15px;
@@ -677,6 +687,12 @@ body{
         max-height: 900px;
     } */
     
+}
+
+@media only screen and (max-width: 645px){
+    .mainmenu-item .item-desc{
+        display: none
+    }
 }
 
 
