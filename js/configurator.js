@@ -1,6 +1,6 @@
 var iframe = document.getElementById("api-frame");
 var DEFAULT_URLID = "348778fc87b54be6b83ccd311b63fa3d";
-var DEFAULT_PREFIX = "woodzip1 ";
+var DEFAULT_PREFIX = "woodzip2 ";
 const availableTextures = {
   defaultsIndexes: {
     bardages: 9,
