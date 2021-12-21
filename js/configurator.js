@@ -77,7 +77,7 @@ var Configurator = {
   /**
    * Initialize viewer
    */
-  init: function (config, iframe) {
+  init(config, iframe) {
     this.config = config;
     var client = new Sketchfab(iframe);
     this.nodes = [];
@@ -110,16 +110,20 @@ var Configurator = {
               UI.selectConfig("bardages", this.currentBardages, () => {
                 UI.selectConfig("enduits", this.currentEnduits, () => {
                   this.initializeNodes(() => {
+                    let i = 0;
                     for (let node of this.nodes) {
-                      if (!node.selected)
-                        this.toggleNode(
-                          node.instanceID,
-                          node.selected,
-                          () => {}
+                      this.toggleNode(node.instanceID, node.selected, () => {
+                        const nodeIndex = this.nodes.findIndex(
+                          (n) => n.instanceID === node.instanceID
                         );
+                        if (nodeIndex === this.nodes.length - 1) {
+                          UI.cost_el.textContent = this.calculateCost() + "";
+                        }
+                      });
+
+                      i++;
                     }
 
-                    this.calculateCost();
                     toggleBarrage(false);
                   });
                 });
@@ -152,7 +156,6 @@ var Configurator = {
       let opt_ids = [];
       for (var i = 0; i < keys.length; i++) {
         node = nodes[keys[i]];
-        // console.log(node);
         isOptionObject =
           node.name &&
           node.name.startsWith(this.config.prefix) &&
@@ -237,7 +240,7 @@ var Configurator = {
         }
       }
 
-      console.log(this.nodes);
+      // console.log(this.nodes);
 
       callback();
     });
@@ -360,10 +363,12 @@ var Configurator = {
   },
 
   selectMaison(maisonId, cb) {
-    currentMaison = maisons.find((m) => m.id === maisonId);
+    if (currentMaison.id !== maisonId) {
+      currentMaison = maisons.find((m) => m.id === maisonId);
 
-    if (currentMaison) {
-      this.init({ urlid: maisonId, prefix: DEFAULT_PREFIX }, iframe);
+      if (currentMaison) {
+        this.init({ urlid: maisonId, prefix: DEFAULT_PREFIX }, iframe);
+      }
     }
   },
 
@@ -465,7 +470,6 @@ var UI = {
       currentNodesState.filter(
         (n) => node.hide_when_visible && node.hide_when_visible.includes(n.id)
       );
-    
 
     const node = getNode(name);
 
@@ -482,7 +486,7 @@ var UI = {
       if (node.hide_when_visible) {
         const hiddenNodes = getHiddenNodes(node);
         for (let opt of hiddenNodes) {
-          console.log("toggle 1");
+          // console.log("toggle 1");
           const opt_MasterNodes = getMasterNodes(opt);
           let showOpt = true;
           for (let n of opt_MasterNodes) {
@@ -491,21 +495,20 @@ var UI = {
               break;
             }
           }
-          if(showOpt){
+          if (showOpt) {
             opt.selected = true;
           }
         }
       }
 
       for (let opt of dependingNodes) {
-
         opt.selected = false;
 
         //we attempt to show back nodes which were hidden when the dependent nodes were visible
         if (opt.hide_when_visible) {
           const opt_hiddenNodes = getHiddenNodes(opt);
           for (let n of opt_hiddenNodes) {
-            console.log("toggle");
+            // console.log("toggle");
             const opt_MasterNodes = getNodeMasters(n);
             let showOpt = true;
             for (let m of opt_MasterNodes) {
@@ -514,7 +517,7 @@ var UI = {
                 break;
               }
             }
-            if(showOpt){
+            if (showOpt) {
               n.selected = true;
             }
           }
@@ -545,11 +548,29 @@ var UI = {
       node.selected = true;
 
       //We toggle on the dependent nodes and making sure that the other master nodes on which they depend are equally on(selected)
-      const dependingNodes = getNodeSlaves(node);
+      const dependingNodes = getNodeSlaves(node).sort((n1, n2) => {
+        if (
+          (n1.depends_on &&
+            n2.depends_on &&
+            n1.depends_on.length < n2.depends_on.length) ||
+          (!n1.depends_on && n2.depends_on)
+        ) {
+          return -1;
+        } else if (
+          (n1.depends_on &&
+            n2.depends_on &&
+            n1.depends_on.length === n2.depends_on.length) ||
+          (!n1.depends_on && !n2.depends_on)
+        ) {
+          return 0;
+        } else return 1;
+      });
       for (let opt of dependingNodes) {
         let allowShow = true;
         if (opt.depends_on) {
-          const otherMasternodes = getNodeMasters(opt);
+          const otherMasternodes = getNodeMasters(opt).filter(
+            (n) => n.id !== node.id
+          );
 
           for (let obj of otherMasternodes) {
             if (!obj.selected) {
@@ -586,21 +607,21 @@ var UI = {
 
     //we render the nodes based on their selected values
     if (isFinalRender) {
-      console.log(currentNodesState,Configurator.nodes);
-      let i=0;
+      console.log(currentNodesState, Configurator.nodes);
+      let i = 0;
       for (let obj of currentNodesState) {
-
-        if(obj.selected !== Configurator.nodes[i].selected){
+        if (obj.selected !== Configurator.nodes[i].selected) {
           Configurator.nodes[i].selected = obj.selected;
 
-          if (obj.instanceID){
-            Configurator.toggleNode(obj.instanceID, obj.selected, () => {console.log(obj.selected?"showing ":"hidding",obj.nom)});
+          if (obj.instanceID) {
+            Configurator.toggleNode(obj.instanceID, obj.selected, () => {
+              console.log(obj.selected ? "showing " : "hidding", obj.nom);
+            });
           }
         }
 
         i++;
       }
-
     }
 
     this.renderExtensionsConfigList();
@@ -683,11 +704,7 @@ var UI = {
       id="node${opt.id}" 
        />
       <div class="item-int">
-          <img src="${
-            opt.nom === "Garage"
-              ? "./assets/garage.jpg"
-              : "./assets/terrasse.jpg"
-          }" alt="image" />
+          <img src="${opt.image_url || "/assets/config.png"}" alt="image" />
           <div class="">
           <div style="text-transform:capitalize;" class="item-name">${
             opt.display_name
@@ -720,7 +737,9 @@ var UI = {
                 id="${maison.id}" 
                  />
                 <div class="item-int">
-                    <img src="assets/garage.jpg" alt="image" />
+                    <img src="${
+                      maison.image_url || "./assets/services.png"
+                    }" alt="icone maison" />
                     <div style="display:flex; align-items:center;" class="">
                     <div style="text-transform:capitalize;" class="item-name">${
                       maison.nom

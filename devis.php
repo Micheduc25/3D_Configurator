@@ -160,8 +160,8 @@
                 } else {
                     echo "Le message n'a pas pu etre envoyé...";
                 }
-                // header("Location: https://www.woodzip.com/");
-                // exit();
+                header("Location: https://www.woodzip.com/");
+                exit();
             } else {
 
                 echo '<div class="alert-popup failed"> Une erreur s\'est produite lors du traitement de votre demande </div>';

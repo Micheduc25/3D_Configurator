@@ -73,6 +73,7 @@
 		// $dbName = getenv("WOODZIP_DB");
 		// $dbUsername = getenv("WOODZIP_DB_USERNAME");
     $conn = mysqli_connect("localhost", "root", "", "3d_woodzip_com");
+    // $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
 
 		
 		// Check connection
@@ -109,10 +110,10 @@
                 onclick="toggleConfigMenu('maisons',false,event)"
                 class="mainmenu-item maisons"
               >
-                <div class="item-title">
+                <div class="item-title maisons">
                   <strong> MAISON</strong>
                 </div>
-                <div class="item-desc">CHOISIR LA MAISON A CONFIGURER</div>
+                <div class="item-desc maisons">CHOISIR LA MAISON A CONFIGURER</div>
               </div>
               <div
                 onclick="toggleConfigMenu('enduits',true,event)"

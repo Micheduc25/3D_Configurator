@@ -12,9 +12,9 @@ function toggleSubMenu(category, isTexture, e) {
 
 function toggleConfigMenu(category = "bardages", isTexture, e) {
   const configMenu = document.getElementById("config-menu");
-
-
+  
   if (!configMenu.classList.contains("show")) {
+    
     if (category !== "options" && isTexture === true) {
       //here we handle textures menu toggling
       UI.renderConfigListItems(category, isTexture);
