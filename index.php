@@ -34,6 +34,63 @@
   </head>
 
   <body>
+
+    <?php 
+
+      function queryTable($conn, $table, $fields, $where){
+
+        if(isset($where)){
+          $sql = "SELECT * FROM $table WHERE $where";
+        }
+        else{
+        $sql = "SELECT * FROM $table";
+      }
+
+        $results = $conn->query($sql);
+
+        if($results->num_rows > 0){
+            
+          $finalResults = array();
+          while($row = $results->fetch_assoc()) {
+            $tempArray = array();
+            foreach($row as $key => $val){
+              $tempArray[$key] = $val; 
+            }
+            array_push($finalResults,$tempArray); 
+          }
+          return $finalResults;
+        } else{
+          return false;
+        }
+      }
+
+      //remoce this function later
+
+    
+    //Here we load the houses available in the database
+
+    // $dbPassword = getenv("WOODZIP_DB_PASSWORD");
+		// $dbName = getenv("WOODZIP_DB");
+		// $dbUsername = getenv("WOODZIP_DB_USERNAME");
+    $conn = mysqli_connect("localhost", "root", "", "3d_woodzip_com");
+
+		
+		// Check connection
+		if($conn === false){
+			die("ERROR: Could not connect... "
+				. mysqli_connect_error());
+		}
+
+    $maisons = queryTable($conn,"maisons","",null);
+    $options = queryTable($conn,"options","",null);
+
+    
+		
+		// Close connection
+		mysqli_close($conn);
+    
+    ?>
+
     <section class="page-3d">
       <aside class="sidebar">
         <div class="sidebar__upper">
@@ -48,6 +105,15 @@
               >
             </div>
             <div class="main-menu">
+              <div
+                onclick="toggleConfigMenu('maisons',false,event)"
+                class="mainmenu-item maisons"
+              >
+                <div class="item-title">
+                  <strong> MAISON</strong>
+                </div>
+                <div class="item-desc">CHOISIR LA MAISON A CONFIGURER</div>
+              </div>
               <div
                 onclick="toggleConfigMenu('enduits',true,event)"
                 class="mainmenu-item"
@@ -270,8 +336,23 @@
     </section>
 
     <!-- Initialize the viewer -->
+    <?php
+      
+      if(isset($maisons) && isset($options)){
+        
+        $maisonEncoded = json_encode($maisons);
+        $optionsEncoded = json_encode($options);
 
-    <script src="./js/configurator.js"></script>
+        echo "<script> const maisons = $maisonEncoded;  const maisonOptions = $optionsEncoded;</script>";
+        echo '<script  src="./js/configurator.js"></script>';
+
+    }
+    ?>
+
     <script src="./js/main.js"></script>
+
+
+
+
   </body>
 </html>

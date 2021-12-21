@@ -3,18 +3,36 @@ function toggleSubMenu(category, isTexture, e) {
   subMenu.classList.toggle("show");
 }
 
+/**
+ * [toggleConfigMenu] function makes the side menu to appear or disappear
+ * @param {String} category The category of the menu
+ * @param {Boolean} isTexture Whether the menu to be oppened is a texture menu or not
+ * @param {Event} e The event triggered by the click
+ */
+
 function toggleConfigMenu(category = "bardages", isTexture, e) {
   const configMenu = document.getElementById("config-menu");
+
+
   if (!configMenu.classList.contains("show")) {
     if (category !== "options" && isTexture === true) {
+      //here we handle textures menu toggling
       UI.renderConfigListItems(category, isTexture);
       document.querySelector(".config-menu-title").textContent =
         category !== "bardages"
           ? "REVETEMENT PRINCIPAL"
           : "REVETEMENT SECONDAIRE";
-    } else {
+    } else if(category === "options" && isTexture===false) {
+      //here we handle extensions menu toggling
       UI.renderExtensionsConfigList();
       document.querySelector(".config-menu-title").textContent = "OPTIONS";
+    }
+    
+    else if(e.target.classList.contains("maisons")){
+      
+      //we handle the toggling of the houses menu here
+      document.querySelector(".config-menu-title").textContent = "MAISONS";
+      UI.renderHousesListItems();
     }
   }
   configMenu.classList.toggle("show");

@@ -16,6 +16,18 @@
 
 <body>
     <?php
+
+    //anything which is not in the fixed keys is an option
+    $fixed_keys  = array(
+        'prenom',
+        'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays', 'question', 'bardages', 'enduits', 'totalCostWithTVA', 'totalCostWithoutTVA'
+    );
+
+    $form_keys = array('prenom',
+    'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays', 'question', 'authorisation','submit');
+
+    $cost_keys = array('totalCostWithTVA','totalCostWithoutTVA');
+
     if (isset($_POST['submit'])) {
 
 
@@ -29,12 +41,12 @@
 		$dbName = getenv("WOODZIP_DB");
 		$dbUsername = getenv("WOODZIP_DB_USERNAME",true); */
 
-        $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
+        // $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
 
         //print_r("$dbPassword  $dbName $dbUsername are the values and new pass = $newPass");
 
 
-        // $conn = mysqli_connect("localhost", "root", "", "devis_woodzip");
+        $conn = mysqli_connect("localhost", "root", "", "3d_woodzip_com");
 
         // Check connection
         if ($conn === false) {
@@ -56,27 +68,47 @@
 
         $bardages = $_REQUEST['bardages'];
         $enduits = $_REQUEST['enduits'];
-        $terrasse = $_REQUEST['terrasse'];
-        $garage = $_REQUEST['garage'];
-        $totalCost = $_REQUEST['totalCost'];
-        $totalCostTVA = $_REQUEST['totalCostTVA'];
+        // $terrasse = $_REQUEST['terrasse'];
+        // $garage = $_REQUEST['garage'];
+        $totalCost = $_REQUEST['totalCostWithoutTVA'];
+        $totalCostTVA = $_REQUEST['totalCostWithTVA'];
 
-        $terrasse_val = $terrasse === 'true' ? 1 : 0;
-        $garage_val = $garage === 'true' ? 1 : 0;
+        
+        
+        $options = "";
+
+        foreach($_REQUEST as $key => $value){
+            if(array_search($key, $fixed_keys)==false && $value=="Oui"){
+                $options .= str_replace('_', ' ',$key). ',';
+            }
+        }
+
+        $options = substr($options,0, strlen($options)-1);
+
+
+
+        // $terrasse_val = $terrasse === 'true' ? 1 : 0;
+        // $garage_val = $garage === 'true' ? 1 : 0;
 
         //if authorization is true, we insert the data into the devis table
 
         if ($authorisation === "on") {
 
+
             $sql = "INSERT INTO devis(prenom,
-                nom,addresse_elec,addresse,telephone,code_postal,pays,question,bardages,enduits,garage,terrasse) VALUES ('$prenom',
-                    '$nom','$addresse_elec','$addresse','$telephone','$code_postal','$pays','$question','$bardages','$enduits',$garage_val,$terrasse_val)";
+                nom,addresse_elec,addresse,telephone,code_postal,pays,question,bardages,enduits,options) VALUES ('$prenom',
+                    '$nom','$addresse_elec','$addresse','$telephone','$code_postal','$pays','$question','$bardages','$enduits','$options')";
+
+            echo "<script type='text/javascript'> console.log(`$sql`) </script>";
+            
 
             if (mysqli_query($conn, $sql)) {
+
+
                 echo '<div class="alert-popup success"> Votre demande a été soumise avec succès </div>';
-                $garage_text = $garage === 'true' ? "Oui" : "Non";
-                $terrasse_text = $terrasse === 'true' ? "Oui" : "Non";
-                $to = "lionel.chouraqui@meolia.fr";
+               
+                // $to = "lionel.chouraqui@meolia.fr";
+                $to = "ndjockjunior@gmail.com";
                 $subject = "Devis WOODZIP";
 
                 $message = '<html><body>';
@@ -91,8 +123,15 @@
                 $message .= "<tr><td><strong>Question/Remarques:</strong> </td><td>" . htmlentities($question) . "</td></tr>";
                 $message .= "<tr><td><strong>Revêtemement principal:</strong> </td><td> Enduit " . $enduits . "</td></tr>";
                 $message .= "<tr><td><strong>Revêtemement secondaire:</strong> </td><td> Bardage " . $bardages . "</td></tr>";
-                $message .= "<tr><td><strong>Terrasse:</strong> </td><td>" . $terrasse_text . "</td></tr>";
-                $message .= "<tr><td><strong>Garage:</strong> </td><td>" . $garage_text . "</td></tr>";
+
+                foreach ($_REQUEST as $key => $value) {
+                    if (array_search($key, $fixed_keys) == false) {
+                        $keyname = str_replace('_', ' ', $key);
+                        $message .= "<tr><td><strong>" . $keyname . ":</strong> </td><td>" . $value . "</td></tr>";
+                    }
+                }
+                // $message .= "<tr><td><strong>Terrasse:</strong> </td><td>" . $terrasse_text . "</td></tr>";
+                // $message .= "<tr><td><strong>Garage:</strong> </td><td>" . $garage_text . "</td></tr>";
                 $message .= "<tr><td><strong>Coût total (T.V.A excl):</strong> </td><td><strong>€ " .  strval($totalCost) . "</strong></td></tr>";
                 $message .= "<tr><td><strong>Coût total (T.V.A incl):</strong> </td><td><strong>€ " . strval($totalCostTVA) . "</strong></td></tr>";
 
@@ -100,25 +139,31 @@
                 $message .= "</body></html>";
 
 
-                $header = "From:lionel.chouraqui@meolia.fr \r\n";
-                $header .= "Cc:lionel.chouraqui@meolia.fr \r\n";
+                $header = "From:ndjockjunior@gmail.com \r\n";
+                $header .= "Cc:ndjockjunior@gmail.com \r\n";
                 $header .= "MIME-Version: 1.0\r\n";
                 $header .= "Content-type: text/html\r\n";
 
-                $headers .= "Organization: WOODZIP\r\n";
-                $headers .= "X-Priority: 3\r\n";
-                $headers .= "X-Mailer: PHP" . phpversion() . "\r\n";
+                $header .= "Organization: WOODZIP\r\n";
+                $header .= "X-Priority: 3\r\n";
+                $header .= "X-Mailer: PHP" . phpversion() . "\r\n";
 
                 $retval = mail($to, $subject, $message, $header);
 
+                echo "<script type='text/javascript'> console.log('sending mail....') </script>";
+
+
                 if ($retval == true) {
+                    echo "<script type='text/javascript'> console.log('mail correctly sent') </script>";
+
                     echo "Message envoyé avec succès...";
                 } else {
                     echo "Le message n'a pas pu etre envoyé...";
                 }
-                header("Location: https://www.woodzip.com/");
-                exit();
+                // header("Location: https://www.woodzip.com/");
+                // exit();
             } else {
+
                 echo '<div class="alert-popup failed"> Une erreur s\'est produite lors du traitement de votre demande </div>';
             }
         } else {
@@ -151,7 +196,14 @@
                 Vous avez choisi le configuration suivante pour votre maison:
             </h2>
 
-            <p class="config-vals">
+            <?php
+            foreach ($_POST as $key => $value) {
+                if (isset($value) && array_search($key,$form_keys)===false && array_search($key,$cost_keys)===false) {
+                    echo '<p class="config-vals">' . str_replace('_', ' ', $key) . ': <strong>' . $value . '</strong> </p>';
+                }
+            }
+            ?>
+            <!-- <p class="config-vals">
                 Revêtement principal : <strong>
                     <?php
                     if (isset($_POST['enduits'])) {
@@ -169,7 +221,7 @@
                     <?php if (isset($_POST['terrasse']) && $_POST['terrasse'] === 'true') echo "Terrasse" ?>
                     <?php if (isset($_POST['garage']) && $_POST['garage'] === 'true') echo ' et Garage' ?>
                 </strong>
-            </p>
+            </p> -->
 
 
             <p>
@@ -222,32 +274,38 @@
             </p>
 
             <?php
-            $bardages = $_POST['bardages'];
-            $enduits = $_POST['enduits'];
-            $terrasse = $_POST['terrasse'];
-            $garage = $_POST['garage'];
-            $totalCost = $_POST['totalCost'];
-            $totalCostTVA = $_POST['totalCostTVA'];
+            // $bardages = $_POST['bardages'];
+            // $enduits = $_POST['enduits'];
+            // $terrasse = $_POST['terrasse'];
+            // $garage = $_POST['garage'];
+            // $totalCost = $_POST['totalCost'];
+            // $totalCostTVA = $_POST['totalCostTVA'];
 
-            if (isset($bardages)) {
-                echo '<input hidden type="text" name="bardages" value="' . $bardages . '"/>';
-            }
-            if (isset($enduits)) {
-                echo '<input hidden type="text" name="enduits" value="' . $enduits . '"/>';
-            }
-            if (isset($terrasse)) {
-                echo '<input hidden type="text" name="terrasse" value="' . $terrasse . '"/>';
-            }
-            if (isset($garage)) {
-                echo '<input hidden type="text" name="garage" value="' . $garage . '"/>';
-            }
-            if (isset($totalCost)) {
-                echo '<input hidden type="text" name="totalCost" value="' . strval($totalCost) . '"/>';
-            }
-            if (isset($totalCostTVA)) {
-                echo '<input hidden type="text" name="totalCostTVA" value="' . strval($totalCostTVA) . '"/>';
-            }
+            // if (isset($bardages)) {
+            //     echo '<input hidden type="text" name="bardages" value="' . $bardages . '"/>';
+            // }
+            // if (isset($enduits)) {
+            //     echo '<input hidden type="text" name="enduits" value="' . $enduits . '"/>';
+            // }
+            // if (isset($terrasse)) {
+            //     echo '<input hidden type="text" name="terrasse" value="' . $terrasse . '"/>';
+            // }
+            // if (isset($garage)) {
+            //     echo '<input hidden type="text" name="garage" value="' . $garage . '"/>';
+            // }
+            // if (isset($totalCost)) {
+            //     echo '<input hidden type="text" name="totalCost" value="' . strval($totalCost) . '"/>';
+            // }
+            // if (isset($totalCostTVA)) {
+            //     echo '<input hidden type="text" name="totalCostTVA" value="' . strval($totalCostTVA) . '"/>';
+            // }
 
+            foreach ($_POST as $key => $value) {
+
+                if (isset($value)) {
+                    echo '<input hidden type="text" name="' . "$key" . '" value="' . strval($value) . '"/>';
+                }
+            }
 
             ?>
 
