@@ -111,7 +111,7 @@
                 class="mainmenu-item maisons"
               >
                 <div class="item-title maisons">
-                  <strong> MAISON</strong>
+                  <strong>MODELE DE MAISON</strong>
                 </div>
                 <div class="item-desc maisons">CHOISIR LA MAISON A CONFIGURER</div>
               </div>

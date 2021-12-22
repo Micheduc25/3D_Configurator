@@ -31,7 +31,7 @@ function toggleConfigMenu(category = "bardages", isTexture, e) {
     else if(e.target.classList.contains("maisons")){
       
       //we handle the toggling of the houses menu here
-      document.querySelector(".config-menu-title").textContent = "MAISONS";
+      document.querySelector(".config-menu-title").textContent = "MODELE DE MAISON";
       UI.renderHousesListItems();
     }
   }

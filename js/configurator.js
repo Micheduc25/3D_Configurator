@@ -110,9 +110,8 @@ var Configurator = {
               UI.selectConfig("bardages", this.currentBardages, () => {
                 UI.selectConfig("enduits", this.currentEnduits, () => {
                   this.initializeNodes(() => {
-                    let i = 0;
                     for (let node of this.nodes) {
-                      this.toggleNode(node.instanceID, node.selected, () => {
+                      this.toggleNode(node.instanceID, node.visible_on_init, () => {
                         const nodeIndex = this.nodes.findIndex(
                           (n) => n.instanceID === node.instanceID
                         );
@@ -121,7 +120,6 @@ var Configurator = {
                         }
                       });
 
-                      i++;
                     }
 
                     toggleBarrage(false);
@@ -607,7 +605,7 @@ var UI = {
 
     //we render the nodes based on their selected values
     if (isFinalRender) {
-      console.log(currentNodesState, Configurator.nodes);
+      // console.log(currentNodesState, Configurator.nodes);
       let i = 0;
       for (let obj of currentNodesState) {
         if (obj.selected !== Configurator.nodes[i].selected) {
@@ -615,7 +613,7 @@ var UI = {
 
           if (obj.instanceID) {
             Configurator.toggleNode(obj.instanceID, obj.selected, () => {
-              console.log(obj.selected ? "showing " : "hidding", obj.nom);
+              // console.log(obj.selected ? "showing " : "hidding", obj.nom);
             });
           }
         }
@@ -705,7 +703,7 @@ var UI = {
        />
       <div class="item-int">
           <img src="${opt.image_url || "/assets/config.png"}" alt="image" />
-          <div class="">
+          <div class="item-name-price">
           <div style="text-transform:capitalize;" class="item-name">${
             opt.display_name
           }</div>
@@ -737,7 +735,7 @@ var UI = {
                 id="${maison.id}" 
                  />
                 <div class="item-int">
-                    <img src="${
+                    <img class="maison-img" src="${
                       maison.image_url || "./assets/services.png"
                     }" alt="icone maison" />
                     <div style="display:flex; align-items:center;" class="">
