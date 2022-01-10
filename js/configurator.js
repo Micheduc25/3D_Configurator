@@ -61,6 +61,8 @@ var Configurator = {
   api: null,
   config: null,
   options: [],
+  allOptions:[],
+  allMaisons:[],
   materials: [],
   defaultMaterial: null,
   textures: [],
@@ -81,6 +83,8 @@ var Configurator = {
     this.config = config;
     var client = new Sketchfab(iframe);
     this.nodes = [];
+    this.allOptions = JSON.parse(JSON.stringify(maisonOptions));
+
     client.init(config.urlid, {
       ui_infos: 0,
       ui_controls: 1,
@@ -161,7 +165,7 @@ var Configurator = {
 
         if (isOptionObject) {
           //we find the corresponding option from the database and set its display name
-          let opt = maisonOptions.find(
+          let opt = this.allOptions.find(
             (op) =>
               op.nom.includes(node.name) &&
               this.config.urlid === op.maison_id &&
@@ -203,7 +207,7 @@ var Configurator = {
       }
 
       //We add other options which are not found in the list of nodes but are in the database.
-      for (opt of maisonOptions) {
+      for (opt of this.allOptions) {
         if (!opt_ids.includes(opt.id) && opt.maison_id === this.config.urlid) {
           if (opt.depends_on !== null && typeof opt.depends_on === "string") {
             opt.depends_on = opt.depends_on

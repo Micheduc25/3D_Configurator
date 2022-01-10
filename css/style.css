@@ -395,6 +395,7 @@ body{
     padding:15px 0;
     border-bottom: 1px solid white;
     margin-bottom: 14px;
+    cursor:pointer;
 }
 
 .item-int{
@@ -500,6 +501,8 @@ body{
  .hconfig-menu::-webkit-scrollbar-track, .content-wrapper::-webkit-scrollbar-track {
     background: #f1f1f1;
     width:7px;
+    border-radius: 15px;
+
   }
   
   /* Handle */
@@ -612,7 +615,7 @@ body{
 
 .popup-copy{
     display:flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 .popup-copy button{
     background:rgb(39, 204, 6);
@@ -627,6 +630,19 @@ body{
     background:rgb(57, 219, 24);
 }
 
+
+.phonenum{
+    display:flex;
+    align-items: center;
+    margin-top:20px;
+    justify-content: center;
+}
+
+.phonenum img{
+    width:22px;
+    margin-right:10px;
+    
+}
 
 
 
