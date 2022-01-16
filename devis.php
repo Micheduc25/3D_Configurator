@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -20,13 +20,17 @@
     //anything which is not in the fixed keys is an option
     $fixed_keys  = array(
         'prenom',
-        'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays', 'question', 'bardages', 'enduits', 'totalCostWithTVA', 'totalCostWithoutTVA'
+        'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays',
+         'question', 'bardages', 'enduits', 'totalCostWithTVA', 'totalCostWithoutTVA',
+          'mapImage', 'frontView', 'backView','location'
     );
 
-    $form_keys = array('prenom',
-    'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays', 'question', 'authorisation','submit');
+    $form_keys = array(
+        'prenom',
+        'nom', 'addresse_elec', 'addresse', 'telephone', 'code_postal', 'pays', 'question', 'authorisation', 'submit'
+    );
 
-    $cost_keys = array('totalCostWithTVA','totalCostWithoutTVA');
+    $cost_keys = array('totalCostWithTVA', 'totalCostWithoutTVA');
 
     if (isset($_POST['submit'])) {
 
@@ -73,17 +77,23 @@
         $totalCost = $_REQUEST['totalCostWithoutTVA'];
         $totalCostTVA = $_REQUEST['totalCostWithTVA'];
 
-        
-        
+        $mapImage = $_REQUEST['mapImage'];
+        $frontView = $_REQUEST['frontView'];
+        $backView = $_REQUEST['backView'];
+        $location = $_REQUEST['location'];
+
+
+
         $options = "";
 
-        foreach($_REQUEST as $key => $value){
-            if(array_search($key, $fixed_keys)==false && $value=="Oui"){
-                $options .= str_replace('_', ' ',$key). ',';
+        foreach ($_REQUEST as $key => $value) {
+            if (
+                array_search($key, $fixed_keys) == false && $value == "Oui" ){
+                $options .= str_replace('_', ' ', $key) . ',';
             }
         }
 
-        $options = substr($options,0, strlen($options)-1);
+        $options = substr($options, 0, strlen($options) - 1);
 
 
 
@@ -100,20 +110,23 @@
                     '$nom','$addresse_elec','$addresse','$telephone','$code_postal','$pays','$question','$bardages','$enduits','$options')";
 
             echo "<script type='text/javascript'> console.log(`$sql`) </script>";
-            
+
 
             if (mysqli_query($conn, $sql)) {
 
 
                 echo '<div class="alert-popup success"> Votre demande a été soumise avec succès </div>';
-               
+
                 // $to = "lionel.chouraqui@meolia.fr";
                 $to = "ndjockjunior@gmail.com";
                 $subject = "Devis WOODZIP";
 
                 $message = '<html><body>';
-                $message .= '<h1 style="margin-bottom:25px;">Devis Woodzip</h1>';
-                $message .= '<table rules="all" style="border-color: #666;" cellpadding="10">';
+                $message .= '<h1 style="margin-bottom:35px;">Devis Woodzip</h1>';
+                $message .= '<h3 style="margin-bottom:25px;">Appercu de la maison</h3>';
+                $message .= "<div style=\"margin-bottom:25px;\"><img src=\"$frontView\" /></div>";
+                $message .= "<div style=\"margin-bottom:25px;\"><img src=\"$backView\" /></div>";
+                $message .= '<table rules="all" style="border-color: #666; margin-bottom:35px;" cellpadding="10">';
                 $message .= "<tr style='background: #eee;'><td><strong>Nom et prenoms</strong> </td><td>" . $nom . " " . $prenom . "</td></tr>";
                 $message .= "<tr><td><strong>Adresse electronique:</strong> </td><td>" . $addresse_elec . "</td></tr>";
                 $message .= "<tr><td><strong>Adresse:</strong> </td><td>" . $addresse . "</td></tr>";
@@ -136,6 +149,9 @@
                 $message .= "<tr><td><strong>Coût total (T.V.A incl):</strong> </td><td><strong>€ " . strval($totalCostTVA) . "</strong></td></tr>";
 
                 $message .= "</table>";
+                $message .= "<h3 style=\"margin-bottom:25px;\"><strong>Emplacement de la maison</strong></h3>";
+                $message .= "<div style=\"margin-bottom:25px;\"><img src=\"$mapImage\" /></div>";
+                $message .= "<div style=\"margin-bottom:25px;\"><strong>$location</strong></div>";
                 $message .= "</body></html>";
 
 
@@ -198,7 +214,7 @@
 
             <?php
             foreach ($_POST as $key => $value) {
-                if (isset($value) && array_search($key,$form_keys)===false && array_search($key,$cost_keys)===false) {
+                if (isset($value) && array_search($key, $form_keys) === false && array_search($key, $cost_keys) === false) {
                     echo '<p class="config-vals">' . str_replace('_', ' ', $key) . ': <strong>' . $value . '</strong> </p>';
                 }
             }

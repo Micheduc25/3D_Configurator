@@ -1,0 +1,94 @@
+.mapboxgl-canvas {
+  /* width:100vh !important;
+    height:100vh !important; */
+}
+
+a.exit-map {
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  background-color: white;
+  color:black;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  -webkit-box-shadow: 0px 1px 23px 13px rgba(207, 207, 207, 0.75);
+  -moz-box-shadow: 0px 1px 23px 13px rgba(207, 207, 207, 0.75);
+  box-shadow: 0px 1px 23px 13px rgba(207, 207, 207, 0.75);
+  position:absolute;
+  left:30px;
+  top:30px;
+  transform:rotate(180deg);
+  z-index: 1005;
+  text-decoration: none;
+  font-size:  20px;
+  vertical-align:center
+
+}
+
+.wz_map {
+  display: none;
+  opacity: 0;
+  --app-green: 39, 204, 6;
+  height: 100vh;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: fixed;
+  background-color: rgb(var(--app-green));
+  transition: all 0.25s;
+  z-index: 1000;
+}
+
+.wz_map.show {
+  display: block;
+  opacity: 1;
+}
+
+.error-message {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.save-button {
+  background-color: rgb(var(--app-green));
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  border: 2px solid white;
+  border-radius: 6px;
+  padding: 10px 15px;
+  position: fixed;
+  right: 20px;
+  bottom: 40px;
+  cursor: pointer;
+  transition: 0.3s;
+
+  -webkit-box-shadow: 4px 3px 28px -1px rgba(209, 209, 209, 0.75);
+  -moz-box-shadow: 4px 3px 28px -1px rgba(209, 209, 209, 0.75);
+  box-shadow: 4px 3px 28px -1px rgba(209, 209, 209, 0.75);
+}
+
+.save-button:hover {
+  transform: translateY(-5px);
+}
+
+.marker {
+  background-image: url("../assets/home.svg");
+  background-size: contain;
+  width: 50px;
+  height: 50px;
+  /* border-radius: 50%; */
+  cursor: pointer;
+}
+
+@keyframes animateIcon {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scalse(1.2);
+  }
+}

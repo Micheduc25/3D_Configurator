@@ -61,8 +61,8 @@ var Configurator = {
   api: null,
   config: null,
   options: [],
-  allOptions:[],
-  allMaisons:[],
+  allOptions: [],
+  allMaisons: [],
   materials: [],
   defaultMaterial: null,
   textures: [],
@@ -115,15 +115,18 @@ var Configurator = {
                 UI.selectConfig("enduits", this.currentEnduits, () => {
                   this.initializeNodes(() => {
                     for (let node of this.nodes) {
-                      this.toggleNode(node.instanceID, node.visible_on_init, () => {
-                        const nodeIndex = this.nodes.findIndex(
-                          (n) => n.instanceID === node.instanceID
-                        );
-                        if (nodeIndex === this.nodes.length - 1) {
-                          UI.cost_el.textContent = this.calculateCost() + "";
+                      this.toggleNode(
+                        node.instanceID,
+                        node.visible_on_init,
+                        () => {
+                          const nodeIndex = this.nodes.findIndex(
+                            (n) => n.instanceID === node.instanceID
+                          );
+                          if (nodeIndex === this.nodes.length - 1) {
+                            UI.cost_el.textContent = this.calculateCost() + "";
+                          }
                         }
-                      });
-
+                      );
                     }
 
                     toggleBarrage(false);
@@ -387,7 +390,74 @@ var Configurator = {
     return totalCost;
   },
 
+  setCameraLookAt(side = "back", cb) {
+    // this.api.setCameraLookAt(position,target,duration,callback)
+    if (side === "back") {
+      this.api.setCameraLookAt([-3, 22, 7], [0, 0, 0], 0, (err) => {
+        if (!err) {
+          window.console.log("Camera moved");
+          if (cb) cb();
+
+          // this.api.recenterCamera(function (err) {
+          //   if (!err && cb) {
+          //     cb();
+          //   }
+          // });
+        }
+      });
+    } else if ((side === "front", cb)) {
+      this.api.setCameraLookAt([4, -15, 3], [0, 0, 3], 2, (err) => {
+        if (!err) {
+          window.console.log("Camera moved");
+          this.api.recenterCamera(function (err) {
+            if (!err && cb) {
+              cb();
+            }
+          });
+        }
+      });
+    }
+  },
+
+  /**
+   *
+   * @param {HTMLCanvasElement} canvas
+   */
+  downloadCanvasImage(canvasData, prefix = "") {
+    var anchorTag = document.createElement("a");
+    document.body.appendChild(anchorTag);
+    //   document.getElementById("previewImg").appendChild(canvas);
+    anchorTag.download = `${prefix}image${canvasData
+      .toString()
+      .slice(0, 4)}.jpg`;
+    anchorTag.href = canvasData;
+    anchorTag.target = "_blank";
+    anchorTag.click();
+  },
+
+  /**
+   *
+   * @param {HTMLElement} el
+   */
+  screenshotElement(el, cb) {
+    if (html)
+      html2canvas(el).then(function (canvas) {
+        if (cb) cb(canvas);
+      });
+  },
+
+  screenshotModel(cb) {
+    this.api.getScreenShot("image/jpg", function (err, result) {
+      if (!err) {
+        cb(result);
+        // console.log(result); // 'data:image/png;base64,iVBORw0KG...'
+      }
+    });
+  },
+
   async submitConfigData() {
+    toggleBarrage(true);
+
     const submitForm = document.createElement("form");
     submitForm.style.visibility = "hidden";
     submitForm.setAttribute("method", "POST");
@@ -398,28 +468,70 @@ var Configurator = {
       enduits: availableTextures.enduits[this.currentEnduits]["name"],
     };
 
-    for (let node of this.nodes) {
-      if (node.nom.startsWith("whole"))
-        formData[node.display_name.replace(" ", "_")] = node.selected
-          ? "Oui"
-          : "Non";
-    }
+    //we take snapshots of the front and back of the model
 
-    formData.totalCostWithoutTVA = this.calculateCost();
-    formData.totalCostWithTVA =
-      this.calculateCost() + this.calculateCost() * 0.2;
+    let frontViewImageData;
+    let backViewImageData;
 
-    for (key of Object.keys(formData)) {
-      var input = document.createElement("input");
-      input.name = key;
-      input.value = formData[key];
-      submitForm.appendChild(input);
-    }
+    this.setCameraLookAt("front", () => {
+      //once front is visible we screenshot the model
+      this.screenshotModel((frontData) => {
+        this.downloadCanvasImage(frontData, "front"); //remove this later
+        frontViewImageData = frontData;
 
-    document.body.appendChild(submitForm);
-    toggleBarrage(true);
-    submitForm.submit();
-    toggleBarrage(false);
+         //we then turn camera to the back of the model
+         this.setCameraLookAt("back", () => {
+          //once back is visible we screenshot the model again
+
+          setTimeout(()=>{
+            this.screenshotModel((backData) => {
+              backViewImageData = backData;
+
+              this.downloadCanvasImage(backData, "back"); //remove this later
+
+              //we set formdata values for images data of the model
+              formData.frontView = frontViewImageData;
+              formData.backView = backViewImageData;
+
+              //after screenshots taken we create other elements and add them to the form
+
+              //////////////////////////////////////////////////////
+
+              //we obtain the map image and longitude and latitude of marker if any
+              const imageInput = document.querySelector("#imageData");
+              if (imageInput.value) formData.mapImage = imageInput.value;
+              
+              const locationInput = document.querySelector('#location');
+              if(locationInput.value) formData.location = locationInput.value;
+
+              for (let node of this.nodes) {
+                if (node.nom.startsWith("whole"))
+                  formData[node.display_name.replace(" ", "_")] = node.selected
+                    ? "Oui"
+                    : "Non";
+              }
+
+              formData.totalCostWithoutTVA = this.calculateCost();
+              formData.totalCostWithTVA =
+                this.calculateCost() + this.calculateCost() * 0.2;
+
+              for (key of Object.keys(formData)) {
+                var input = document.createElement("input");
+                input.name = key;
+                input.value = formData[key];
+                submitForm.appendChild(input);
+              }
+
+              document.body.appendChild(submitForm);
+              submitForm.submit();
+              toggleBarrage(false);
+            });
+          },1000)
+         
+        });
+
+      });
+    });
   },
 
   toggleTVA(type = "exclude") {

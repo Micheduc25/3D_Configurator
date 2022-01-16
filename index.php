@@ -9,8 +9,12 @@
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png" />
   <link rel="manifest" href="assets/site.webmanifest" />
   <link rel="stylesheet" href="./css/style.css" />
-  <link rel="stylesheet" href="css/utils.css" />
-  
+  <link rel="stylesheet" href="./css/carte.css" />
+  <link rel="stylesheet" href="./css/utils.css" />
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.css" type="text/css">
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css' rel='stylesheet' />
+
+
 
   <title>WOODZIP</title>
 
@@ -114,6 +118,12 @@
                 <strong> OPTIONS</strong>
               </div>
               <div class="item-desc">AJOUTER OU ENLEVER DES OPTIONS</div>
+            </div>
+            <div onclick="toggleMap()" class="mainmenu-item">
+              <div class="item-title">
+                <strong> EMPLACEMENT</strong>
+              </div>
+              <div class="item-desc">CHOISSIR UN EMPLACEMENT SUR LA CARTE</div>
             </div>
           </div>
         </div>
@@ -250,10 +260,36 @@
           <img src="./assets/phone-call.png" alt="phone number"> <span>09 77 25 05 75</span>
         </div>
 
-        
+
       </div>
     </div>
+
   </section>
+
+  <!-----------------------------MAP HERE----------------------------------------------------------------->
+  <section class="wz_map">
+
+      <!-- bouton pour cacher la carte -->
+      <a class="exit-map" href="javascript:toggleMap(false)">
+        &#10140;
+      </a>
+      <!-- l'icone de chargement ici --->
+      <div class="barrage2">
+        <div class="lds-dual-ring"></div>
+      </div>
+      <div class="image-to-snap" style="width: 100%; height: 100vh;">
+        <div id='map' style='width: 100%; height: 100%;'></div>
+      </div>
+      <div class="error-message"></div>
+
+      <input type="submit" name='save-button' id="save-button" style="display:none;" class="save-button" value="Sauvegarder">
+      <input type="text" name="imageData" id="imageData" hidden/>
+      <input type="text" name="location" id="location" hidden/>
+  </section>
+
+
+  <!-----------------------------MAP END------------------------------------------------------------------>
+
 
   <!-- Initialize the viewer -->
   <?php
@@ -270,7 +306,12 @@
 
   <script src="./js/main.js"></script>
 
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>
+  <script src="./js/html2canvas.min.js">
+  </script>
 
+  <script type="text/javascript" src="./js/carte.js"></script>
 
 
 </body>

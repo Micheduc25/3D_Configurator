@@ -1,4 +1,4 @@
-.barrage{
+.barrage,.barrage2{
     position:absolute;
     left:0;
     right:0;
@@ -16,7 +16,7 @@
 
 }
 
-.barrage.show{
+.barrage.show,.barrage2.show{
     display: flex;
     opacity: 1;
 }
