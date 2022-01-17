@@ -524,7 +524,7 @@ var Configurator = {
 
               document.body.appendChild(submitForm);
               submitForm.submit();
-              toggleBarrage(false);
+              // toggleBarrage(false);
             });
           },1000)
          
