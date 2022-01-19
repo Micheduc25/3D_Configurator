@@ -1,4 +1,3 @@
-\
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +17,6 @@
 <body>
     <?php
 
-    // define('UPLOAD_DIR', "assets..images/saved_images/");
     define('SERVER_URL', 'https://3d.woodzip.com');
 
 
@@ -42,7 +40,6 @@
         print $success ? $file : 'Unable to save the file.';
 
         fclose($myFile);
-        // echo "<script type=\"text/javascript\"> console.log($success,'\n',$file)</script>";
 
         if ($success) {
             return SERVER_URL .'/assets/saved_images/'.$id.'.png';
@@ -103,8 +100,6 @@
         $backView = $_REQUEST['backView'];
         $location = $_REQUEST['location'];
         
-        echo "<script type=\"text/javascript\"> console.log('we are here ohhhh about to')</script>";
-
         if (isset($mapImage)) {
             $mapImage = saveImageToServer($mapImage);
         }
@@ -210,9 +205,9 @@
 
 
                 if ($retval == true) {
-                    echo "<script type='text/javascript'> console.log('mail correctly sent') </script>";
+                    // echo "<script type='text/javascript'> console.log('mail correctly sent') </script>";
 
-                    echo "Message envoyé avec succès...";
+                    // echo "Message envoyé avec succès...";
                 } else {
                     echo "Le message n'a pas pu etre envoyé...";
                 }

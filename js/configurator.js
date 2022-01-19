@@ -479,11 +479,11 @@ var Configurator = {
         this.downloadCanvasImage(frontData, "front"); //remove this later
         frontViewImageData = frontData;
 
-         //we then turn camera to the back of the model
-         this.setCameraLookAt("back", () => {
+        //we then turn camera to the back of the model
+        this.setCameraLookAt("back", () => {
           //once back is visible we screenshot the model again
 
-          setTimeout(()=>{
+          setTimeout(() => {
             this.screenshotModel((backData) => {
               backViewImageData = backData;
 
@@ -500,9 +500,9 @@ var Configurator = {
               //we obtain the map image and longitude and latitude of marker if any
               const imageInput = document.querySelector("#imageData");
               if (imageInput.value) formData.mapImage = imageInput.value;
-              
-              const locationInput = document.querySelector('#location');
-              if(locationInput.value) formData.location = locationInput.value;
+
+              const locationInput = document.querySelector("#location");
+              if (locationInput.value) formData.location = locationInput.value;
 
               for (let node of this.nodes) {
                 if (node.nom.startsWith("whole"))
@@ -526,10 +526,8 @@ var Configurator = {
               submitForm.submit();
               // toggleBarrage(false);
             });
-          },1000)
-         
+          }, 1000);
         });
-
       });
     });
   },
@@ -556,18 +554,27 @@ var UI = {
   },
 
   selectConfig(category = "bardages", name, cb) {
+    if (window.innerWidth <= 768) {
+      toggleBarrage(true);
+    }
     Configurator.selectConfigOption(category, name, () => {
       this.renderConfigListItems(
         category,
         category === "bardages" || category === "enduits"
       );
 
+      if (window.innerWidth <= 768) {
+        toggleBarrage(false);
+      }
+
       if (cb) cb();
     });
   },
 
   toggleExtension(name, value, isFinalRender = true, cb) {
-    // toggleBarrage(true);
+    if (window.innerWidth <= 768) {
+      toggleBarrage(true);
+    }
     //we deep clone the current nodes in the configurator and work with it and we use the current nodes list as reference
     const currentNodesState = JSON.parse(JSON.stringify(Configurator.nodes));
 
@@ -740,6 +747,9 @@ var UI = {
 
     this.renderExtensionsConfigList();
     this.cost_el.textContent = `${Configurator.calculateCost()}`;
+    if (window.innerWidth <= 768) {
+      toggleBarrage(false);
+    }
   },
 
   selectMaisonUI(maisonId) {

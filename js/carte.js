@@ -12,9 +12,10 @@
       "pk.eyJ1IjoibWljaGVkdWMyNSIsImEiOiJja3h4bGhwcGUxczQ0Mm5vemowOTRsNXdrIn0.CPAQumBkBT2qIEjbceHeSA";
     wz_map = new mapboxgl.Map({
       container: "map", // container ID
-      style: "mapbox://styles/mapbox/streets-v11", // style URL
+      // style: "mapbox://styles/mapbox/streets-v11", // style URL
+      style: 'mapbox://styles/micheduc25/ckylvapm3788o14lea1yew25u', // style URL
       center: [2.349014, 48.864716], // starting position(Paris)
-      zoom: 12, // starting zoom
+      zoom: 13, // starting zoom
       preserveDrawingBuffer: true,
     });
 

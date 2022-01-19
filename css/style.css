@@ -513,7 +513,8 @@ body{
   }
   
   /* Handle on hover */
-  .hconfig-menu::-webkit-scrollbar-thumb:hover, .content-wrapper::-webkit-scrollbar-thumb:hover {
+  .hconfig-menu::-webkit-scrollbar-thumb:hover,
+   .content-wrapper::-webkit-scrollbar-thumb:hover {
     background: rgb(106, 204, 41);
   }
 
