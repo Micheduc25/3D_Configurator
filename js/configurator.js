@@ -152,7 +152,7 @@ var Configurator = {
         console.error(err);
         return;
       }
-      console.log(nodes);
+      // console.log(nodes);
 
       let node;
       let isOptionObject = false;

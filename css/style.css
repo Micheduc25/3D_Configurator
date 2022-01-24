@@ -652,6 +652,10 @@ body{
 
     .logo a {
         display: inline;
+        font-size: 13px;
+    }
+    .logo img{
+        width:110px;
     }
     .page-3d{
         flex-direction: column;
@@ -663,7 +667,7 @@ body{
     }
 
     .sidebar__upper{
-        padding:10px 20px;
+        padding:10px 20px 5px;
         
     }
     .sidebar__upper .content-wrapper{
@@ -688,15 +692,16 @@ body{
         height:100vh;
     }
     .logo{
-        margin: 10px 0 15px;
+        margin: 10px 0 10px;
     }
 
     .mainmenu-item{
-        margin-bottom:15px;
+        margin-bottom:10px;
         font-size: 10px;
+        padding-bottom:0;
     }
     .mainmenu-item .item-title{
-        font-size: 12px;
+        font-size: 10px;
     }
 
     .detail-lower div:first-child{
@@ -718,7 +723,7 @@ body{
         font-size:16px;
     }
     .main-content{
-        height:calc(60% - 180px);
+        height:calc(60% - 72px);
         flex-grow: 0.9;
     }
     nav.top-bar{

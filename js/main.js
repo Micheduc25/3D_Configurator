@@ -10,11 +10,11 @@ function toggleSubMenu(category, isTexture, e) {
  * @param {Event} e The event triggered by the click
  */
 
-function toggleConfigMenu(category = "bardages", isTexture, e) {
+function toggleConfigMenu(category = "maisons", isTexture, e) {
+
   const configMenu = document.getElementById("config-menu");
-  
+
   if (!configMenu.classList.contains("show")) {
-    
     if (category !== "options" && isTexture === true) {
       //here we handle textures menu toggling
       UI.renderConfigListItems(category, isTexture);
@@ -22,16 +22,14 @@ function toggleConfigMenu(category = "bardages", isTexture, e) {
         category !== "bardages"
           ? "REVETEMENT PRINCIPAL"
           : "REVETEMENT SECONDAIRE";
-    } else if(category === "options" && isTexture===false) {
+    } else if (category === "options" && isTexture === false) {
       //here we handle extensions menu toggling
       UI.renderExtensionsConfigList();
       document.querySelector(".config-menu-title").textContent = "OPTIONS";
-    }
-    
-    else if(e.target.classList.contains("maisons")){
-      
+    } else if (category==="maisons") {
       //we handle the toggling of the houses menu here
-      document.querySelector(".config-menu-title").textContent = "MODELE DE MAISON";
+      document.querySelector(".config-menu-title").textContent =
+        "MODELE DE MAISON";
       UI.renderHousesListItems();
     }
   }
@@ -70,24 +68,23 @@ function toggleTechDetails() {
   techDiv.classList.toggle("show");
 }
 
-
-function toggleSharePopup(){
-    document.querySelector(".partager-popup").classList.toggle("show");
+function toggleSharePopup() {
+  document.querySelector(".partager-popup").classList.toggle("show");
 }
 
-function toggleMainMenu(){
+function toggleMainMenu() {
   document.querySelector(".main-menu").classList.toggle("show");
 }
 
 function copyLink(e) {
-    const copyText = document.getElementById("link");
-  
-    /* Select the text field */
-    copyText.select();
-    copyText.setSelectionRange(0, 99999); /* For mobile devices */
-  
-     /* Copy the text inside the text field */
-    navigator.clipboard.writeText(copyText.value);
-  
-    e.target.innerText="Lien copié!";
-  }
+  const copyText = document.getElementById("link");
+
+  /* Select the text field */
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); /* For mobile devices */
+
+  /* Copy the text inside the text field */
+  navigator.clipboard.writeText(copyText.value);
+
+  e.target.innerText = "Lien copié!";
+}
