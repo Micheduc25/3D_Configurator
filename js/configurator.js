@@ -1,5 +1,5 @@
 var iframe = document.getElementById("api-frame");
-var DEFAULT_URLID = maisons[0].id; //"348778fc87b54be6b83ccd311b63fa3d";
+var DEFAULT_URLID = /*"84a9e4b289f446858429a537ae8e76bc"*/ maisons[0].id;
 var DEFAULT_PREFIX = "act_";
 
 let currentMaison = maisons[0];
@@ -152,7 +152,7 @@ var Configurator = {
         console.error(err);
         return;
       }
-      // console.log(nodes);
+      console.log(nodes);
 
       let node;
       let isOptionObject = false;
@@ -369,6 +369,7 @@ var Configurator = {
 
   selectMaison(maisonId, cb) {
     if (currentMaison.id !== maisonId) {
+      toggleBarrage(true);
       currentMaison = maisons.find((m) => m.id === maisonId);
 
       if (currentMaison) {
@@ -427,9 +428,9 @@ var Configurator = {
     var anchorTag = document.createElement("a");
     document.body.appendChild(anchorTag);
     //   document.getElementById("previewImg").appendChild(canvas);
-    anchorTag.download = `${prefix}image${canvasData
-      .toString()
-      .slice(0, 4)}.jpg`;
+    anchorTag.download = `Modèle_${
+      prefix === "back" ? "Vue_Arrière" : "Vue_Avant"
+    }.jpg`;
     anchorTag.href = canvasData;
     anchorTag.target = "_blank";
     anchorTag.click();
@@ -608,15 +609,21 @@ var UI = {
         const hiddenNodes = getHiddenNodes(node);
         for (let opt of hiddenNodes) {
           // console.log("toggle 1");
-          const opt_MasterNodes = getMasterNodes(opt);
-          let showOpt = true;
-          for (let n of opt_MasterNodes) {
-            if (!n.selected) {
-              showOpt = false;
-              break;
+
+          const opt_MasterNodes = getNodeMasters(opt);
+
+          if (opt_MasterNodes) {
+            let showOpt = true;
+            for (let n of opt_MasterNodes) {
+              if (!n.selected) {
+                showOpt = false;
+                break;
+              }
             }
-          }
-          if (showOpt) {
+            if (showOpt) {
+              opt.selected = true;
+            }
+          } else {
             opt.selected = true;
           }
         }
@@ -630,16 +637,23 @@ var UI = {
           const opt_hiddenNodes = getHiddenNodes(opt);
           for (let n of opt_hiddenNodes) {
             // console.log("toggle");
+
             const opt_MasterNodes = getNodeMasters(n);
-            let showOpt = true;
-            for (let m of opt_MasterNodes) {
-              if (!m.selected) {
-                showOpt = false;
-                break;
+
+            if (opt_MasterNodes) {
+              let showOpt = true;
+              for (let m of opt_MasterNodes) {
+                if (!m.selected) {
+                  showOpt = false;
+                  break;
+                }
+              }
+              if (showOpt) {
+                n.selected = true;
               }
             }
-            if (showOpt) {
-              n.selected = true;
+            else{
+              opt.selected = true;
             }
           }
         }
@@ -650,7 +664,7 @@ var UI = {
     else {
       //make sure all extensions it depends on are turned on if not we exit the method.
       if (node.depends_on) {
-        const masterNodes = getMasterNodes(node);
+        const masterNodes = getNodeMasters(node);
         let canShowNode = true;
         for (let masterNode of masterNodes) {
           if (!masterNode.selected) {
@@ -846,7 +860,11 @@ var UI = {
   renderHousesListItems() {
     let html = "";
 
-    for (let maison of maisons) {
+    const sortedMaisons = maisons.sort((m1, m2) => {
+      return m1.nom.localeCompare(m2.nom, "fr", { sensitivity: "base" });
+    });
+
+    for (let maison of sortedMaisons) {
       if (currentMaison.id === maison.id) checkedState = 'checked="checked"';
       else checkedState = "";
 

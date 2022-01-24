@@ -37,12 +37,12 @@
 
         $myFile =  fopen($file,'w') or die("Can't create file'");
         $success = fwrite($myFile, $data);
-        print $success ? $file : 'Unable to save the file.';
 
         fclose($myFile);
 
         if ($success) {
             return SERVER_URL .'/assets/saved_images/'.$id.'.png';
+            
         } else return;
     }
 
@@ -201,7 +201,7 @@
 
                 $retval = mail($to, $subject, $message, $header);
 
-                echo "<script type='text/javascript'> console.log('sending mail....') </script>";
+                // echo "<script type='text/javascript'> console.log('sending mail....') </script>";
 
 
                 if ($retval == true) {
