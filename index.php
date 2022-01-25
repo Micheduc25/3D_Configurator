@@ -25,7 +25,7 @@
 <body>
 
   <?php
-
+  require_once './config.php';
   function queryTable($conn, $table, $fields, $where)
   {
 
@@ -53,17 +53,9 @@
     }
   }
 
-  //remoce this function later
-
-
   //Here we load the houses available in the database
 
-  // $dbPassword = getenv("WOODZIP_DB_PASSWORD");
-  // $dbName = getenv("WOODZIP_DB");
-  // $dbUsername = getenv("WOODZIP_DB_USERNAME");
-  $conn = mysqli_connect("localhost", "root", "", "3d_woodzip_com");
-  // $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
-
+  $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
   // Check connection
   if ($conn === false) {
@@ -282,13 +274,15 @@
       </div>
       <div class="error-message"></div>
 
-      <input type="submit" name='save-button' id="save-button" style="display:none;" class="save-button" value="Sauvegarder">
+      <input type="submit" name='save-button' id="save-button" style="display:none;" class="save-button" value="Enregistrer">
       <input type="text" name="imageData" id="imageData" hidden/>
       <input type="text" name="location" id="location" hidden/>
   </section>
 
 
   <!-----------------------------MAP END------------------------------------------------------------------>
+
+  <div class="message-toast"></div>
 
 
   <!-- Initialize the viewer -->
@@ -305,6 +299,7 @@
   ?>
 
   <script src="./js/main.js"></script>
+  <script src="./js/utils.js"></script>
 
   <script src='https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js'></script>
   <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.2/mapbox-gl-geocoder.min.js"></script>

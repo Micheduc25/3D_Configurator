@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
     <meta charset="UTF-8">
@@ -11,12 +11,20 @@
     <link rel="manifest" href="assets/site.webmanifest" />
     <link rel="stylesheet" href="css/devis.css">
     <link rel="stylesheet" href="css/utils.css">
+
+
+
     <title>WOODZIP Devis</title>
 </head>
 
 <body>
-    <?php
+    
+    <div class="message-toast"></div>
 
+    <script src="./js/utils.js"></script>
+
+    <?php
+    require_once './config.php';
     define('SERVER_URL', 'https://3d.woodzip.com');
 
 
@@ -25,24 +33,23 @@
     {
         $sep = DIRECTORY_SEPARATOR;
 
-        $_UPLOAD_DIR = "assets".$sep."saved_images".$sep;
+        $_UPLOAD_DIR = "assets" . $sep . "saved_images" . $sep;
 
         $img = str_replace('data:image/png;base64,', '', $img);
         $img = str_replace(' ', '+', $img);
         $data = base64_decode($img);
         $id = uniqid();
-        $file = $_UPLOAD_DIR. $id . '.png';
-        
-        if(file_exists($file)) return;
+        $file = $_UPLOAD_DIR . $id . '.png';
 
-        $myFile =  fopen($file,'w') or die("Can't create file'");
+        if (file_exists($file)) return;
+
+        $myFile =  fopen($file, 'w') or die("Can't create file'");
         $success = fwrite($myFile, $data);
 
         fclose($myFile);
 
         if ($success) {
-            return SERVER_URL .'/assets/saved_images/'.$id.'.png';
-            
+            return SERVER_URL . '/assets/saved_images/' . $id . '.png';
         } else return;
     }
 
@@ -64,12 +71,7 @@
 
     if (isset($_POST['submit'])) {
 
-        // $conn = mysqli_connect("localhost", "3d_woodzip_com", "gMEb7sR8P1ZRoBJW", "3d_woodzip_com");
-
-        //print_r("$dbPassword  $dbName $dbUsername are the values and new pass = $newPass");
-
-
-        $conn = mysqli_connect("localhost", "root", "", "3d_woodzip_com");
+        $conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
 
         // Check connection
         if ($conn === false) {
@@ -99,7 +101,7 @@
         $frontView = $_REQUEST['frontView'];
         $backView = $_REQUEST['backView'];
         $location = $_REQUEST['location'];
-        
+
         if (isset($mapImage)) {
             $mapImage = saveImageToServer($mapImage);
         }
@@ -137,11 +139,7 @@
 
             if (mysqli_query($conn, $sql)) {
 
-
-                echo '<div class="alert-popup success"> Votre demande a été soumise avec succès </div>';
-
-                // $to = "lionel.chouraqui@meolia.fr";
-                $to = "ndjockjunior@gmail.com";
+                $to = MAIL_TO;
                 $subject = "Devis WOODZIP";
 
                 $message = '<html><body>';
@@ -161,7 +159,7 @@
                 }
                 $message .= '<table rules="all" style="border-color: #666; margin-bottom:35px;" cellpadding="10">';
                 $message .= "<tr style='background: #eee;'><td><strong>Nom et prenoms</strong> </td><td>" . strip_tags($nom) . " " . strip_tags($prenom) . "</td></tr>";
-                $message .= "<tr><td><strong>Adresse electronique:</strong> </td><td>" . strip_tags($addresse_elec) . "</td></tr>";
+                $message .= "<tr><td><strong>Email:</strong> </td><td>" . strip_tags($addresse_elec) . "</td></tr>";
                 $message .= "<tr><td><strong>Adresse:</strong> </td><td>" . strip_tags($addresse) . "</td></tr>";
                 $message .= "<tr><td><strong>Numéro de téléphone:</strong> </td><td>" . strval(strip_tags($telephone)) . "</td></tr>";
                 $message .= "<tr><td><strong>Code postal:</strong> </td><td>" . strip_tags($code_postal) . "</td></tr>";
@@ -176,7 +174,7 @@
                         $message .= "<tr><td><strong>" . $keyname . ":</strong> </td><td>" . $value . "</td></tr>";
                     }
                 }
-               
+
                 $message .= "<tr><td><strong>Coût total (T.V.A excl):</strong> </td><td><strong>€ " .  strval($totalCost) . "</strong></td></tr>";
                 $message .= "<tr><td><strong>Coût total (T.V.A incl):</strong> </td><td><strong>€ " . strval($totalCostTVA) . "</strong></td></tr>";
 
@@ -190,8 +188,8 @@
                 $message .= "</body></html>";
 
 
-                $header = "From:ndjockjunior@gmail.com \r\n";
-                $header .= "Cc:ndjockjunior@gmail.com \r\n";
+                $header = "From:contact@woodzip.com \r\n";
+                $header .= "Cc:contact@woodzip.com \r\n";
                 $header .= "MIME-Version: 1.0\r\n";
                 $header .= "Content-Type: text/html;\r\n";
 
@@ -201,24 +199,51 @@
 
                 $retval = mail($to, $subject, $message, $header);
 
-                // echo "<script type='text/javascript'> console.log('sending mail....') </script>";
 
-
+                echo `<script>toggleBarrage(false)</script>`;
                 if ($retval == true) {
-                    // echo "<script type='text/javascript'> console.log('mail correctly sent') </script>";
+                    echo "<script>
+                         toggleToast(true, 'Votre demande a été soumise avec succès ');
 
-                    // echo "Message envoyé avec succès...";
+                         setTimeout(()=>{
+                            toggleToast(false);
+                            window.location = 'https://www.woodzip.com/';
+
+                         },2500);
+                    </script>";
                 } else {
-                    echo "Le message n'a pas pu etre envoyé...";
+                   echo "<script>
+                             toggleToast(true, 'Une erreur s\'est produite lors du traitement de votre demande');
+    
+                             setTimeout(()=>{
+                                toggleToast(false);
+    
+                             },4000);
+                        </script>
+                    ";
                 }
-                header("Location: https://www.woodzip.com/");
-                exit();
+                // header("Location: https://www.woodzip.com/");
+                // exit();
             } else {
 
-                echo '<div class="alert-popup failed"> Une erreur s\'est produite lors du traitement de votre demande </div>';
+                echo "<script>
+                         toggleToast(true, 'Une erreur s\'est produite lors du traitement de votre demande ',true);
+
+                         setTimeout(()=>{
+                            toggleToast(false);
+
+                         },4000);
+                    </script>";
             }
         } else {
-            echo '<div class="alert-popup failed"> Vous n\'avez pas authorisé cet action </div>';
+            echo "<script>
+                     toggleToast(true, 'Vous n\'avez pas authorisé cet action',true);
+
+                     setTimeout(()=>{
+                        toggleToast(false);
+
+                     },3000);
+                </script>";
         }
 
 
@@ -238,7 +263,7 @@
     <main class="main-content">
         <!-- Loader div -->
         <div class="barrage">
-          <div class="lds-dual-ring"></div>
+            <div class="lds-dual-ring"></div>
         </div>
 
         <form class="devis-form" method="post" action="<?= htmlentities($_SERVER['PHP_SELF']); ?>">
@@ -257,7 +282,7 @@
                     isset($value) &&
                     array_search($key, $form_keys) === false &&
                     array_search($key, $cost_keys) === false &&
-                    $key !== 'frontView' && $key !== 'backView' && 
+                    $key !== 'frontView' && $key !== 'backView' &&
                     $key !== 'mapImage' && $key !== 'location'
 
                 ) {
@@ -276,7 +301,7 @@
                 <input type="text" id="nom" name="nom" placeholder="Entrez votre nom" required>
             </p>
             <p>
-                <label class="required" for="addresse_elec">Adresse électronique</label>
+                <label class="required" for="addresse_elec">Email</label>
                 <input type="text" id="addresse_elec" name="addresse_elec" placeholder="Entrez votre Addresse Electronique" required>
             </p>
             <p>
@@ -330,12 +355,16 @@
 
         </form>
 
+
+        
         <script type="text/javascript">
             const submit = document.getElementById('submit');
-            submit.addEventListener('click', function(){
-                document.querySelector('.barrage').classList.toggle("show");
+            submit.addEventListener('click', function() {
+                toggleBarrage(true);
             });
         </script>
+
+
 
     </main>
 

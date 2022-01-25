@@ -477,7 +477,7 @@ var Configurator = {
     this.setCameraLookAt("front", () => {
       //once front is visible we screenshot the model
       this.screenshotModel((frontData) => {
-        this.downloadCanvasImage(frontData, "front"); //remove this later
+        //this.downloadCanvasImage(frontData, "front"); //remove this later
         frontViewImageData = frontData;
 
         //we then turn camera to the back of the model
@@ -488,7 +488,7 @@ var Configurator = {
             this.screenshotModel((backData) => {
               backViewImageData = backData;
 
-              this.downloadCanvasImage(backData, "back"); //remove this later
+              //this.downloadCanvasImage(backData, "back"); //remove this later
 
               //we set formdata values for images data of the model
               formData.frontView = frontViewImageData;

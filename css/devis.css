@@ -104,8 +104,9 @@ body{
     color:white;
     font-size: 18px;
     z-index: 100;
-    animation:temporaryshow 4s ease-in;
+    animation:temporaryshow 3s ease-in;
     animation-fill-mode: both;
+    z-index: 1001;
 }
 
 .alert-popup.success{
@@ -181,14 +182,16 @@ body{
 
 
 @keyframes temporaryshow {
-    from{
-        opacity: 1;
-        visibility: visible;
+    0%,100%{
+        opacity: 0;
+        
     }
 
-    to{
-        opacity:0;
-        visibility: hidden;
+    30%,70%{
+        opacity:1;
+        
     }
+
+    
 }
 

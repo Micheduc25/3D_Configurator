@@ -106,16 +106,16 @@
           const imageInput = document.querySelector('#imageData');
           const locationInput = document.querySelector('#location');
           imageInput.value = canvas.toDataURL();
-          const currentPosition = marker2.getLngLat();
-          locationInput.value = `Longitude: ${currentPosition.lng}  Latitude: ${currentPosition.lat}`;
+          const currentPosition = marker2.getLngLat() || {lng:2.349014, lat:48.864716};
+          locationInput.value = `Coordonnées (latitude, longitude): ${currentPosition.lat}, ${currentPosition.lng}`;
 
-          var anchorTag = document.createElement("a");
-          document.body.appendChild(anchorTag);
+          // var anchorTag = document.createElement("a");
+          // document.body.appendChild(anchorTag);
           //   document.getElementById("previewImg").appendChild(canvas);
-          anchorTag.download = "map1.jpg";
-          anchorTag.href = canvas.toDataURL();
-          anchorTag.target = "_blank";
-          anchorTag.click();
+          // anchorTag.download = "map1.jpg";
+          // anchorTag.href = canvas.toDataURL();
+          // anchorTag.target = "_blank";
+          // anchorTag.click();
         })
         .finally(() => {
           barrage2.classList.remove("show");
@@ -123,6 +123,11 @@
           document.querySelector(".marker").style.height = "50px";
           wz_map.addControl(geocoder);
           toggleMap(false);
+
+          toggleToast(true, "Emplacement enregistré avec succèss");
+          setTimeout(()=>{
+             toggleToast(false);
+          },3000);
 
         });
     } else {

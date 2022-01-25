@@ -36,10 +36,10 @@ function toggleConfigMenu(category = "maisons", isTexture, e) {
   configMenu.classList.toggle("show");
 }
 
-function toggleBarrage(show) {
-  const loaderContainer = document.querySelector(".barrage");
-  loaderContainer.classList.toggle("show", show);
-}
+// function toggleBarrage(show) {
+//   const loaderContainer = document.querySelector(".barrage");
+//   loaderContainer.classList.toggle("show", show);
+// }
 
 function togglePriceDetails() {
   const detailsDiv = document.querySelector(".price-details");
