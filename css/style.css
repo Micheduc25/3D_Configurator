@@ -752,6 +752,11 @@ body{
     .mainmenu-item .item-desc{
         display: none
     }
+
+    .main-content{
+        height:calc(60% - 100px);
+        flex-grow: 0.9;
+    }
 }
 
 

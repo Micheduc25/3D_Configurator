@@ -272,10 +272,9 @@
       <div class="image-to-snap" style="width: 100%; height: 100vh;">
         <div id='map' style='width: 100%; height: 100%;'></div>
       </div>
-      <div class="error-message"></div>
 
-      <input type="submit" name='save-button' id="save-button" style="display:none;" class="save-button" value="Enregistrer">
-      <input type="text" name="imageData" id="imageData" hidden/>
+      <button id="save-button" style="display:none;" class="save-button">Enregistrer</button>
+      <input type="text" name="mapImage" id="mapImage" hidden/>
       <input type="text" name="location" id="location" hidden/>
   </section>
 

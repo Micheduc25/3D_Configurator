@@ -499,8 +499,11 @@ var Configurator = {
               //////////////////////////////////////////////////////
 
               //we obtain the map image and longitude and latitude of marker if any
-              const imageInput = document.querySelector("#imageData");
-              if (imageInput.value) formData.mapImage = imageInput.value;
+              const imageInput = document.querySelector("#mapImage");
+              if (imageInput.value && imageInput.value.length > 0) {
+                imageInput.remove();
+                submitForm.appendChild(imageInput);
+              }
 
               const locationInput = document.querySelector("#location");
               if (locationInput.value) formData.location = locationInput.value;
@@ -519,15 +522,19 @@ var Configurator = {
               for (key of Object.keys(formData)) {
                 var input = document.createElement("input");
                 input.name = key;
+                input.type = "text";
                 input.value = formData[key];
                 submitForm.appendChild(input);
               }
 
+             
               document.body.appendChild(submitForm);
+
+              // wz_map.remove();
               submitForm.submit();
               // toggleBarrage(false);
             });
-          }, 1000);
+          }, 2000);
         });
       });
     });
@@ -651,8 +658,7 @@ var UI = {
               if (showOpt) {
                 n.selected = true;
               }
-            }
-            else{
+            } else {
               opt.selected = true;
             }
           }

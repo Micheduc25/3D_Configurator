@@ -60,6 +60,13 @@ body{
 
 }
 
+.devis-form p .input-error{
+    color:red;
+    display: inline-block;
+    margin-top: 2px;
+    font-size: 14px;
+}
+
 
 .devis-form p input[type=text],
 .devis-form p input#telephone,
@@ -71,6 +78,7 @@ body{
     font-size: 17px;
     padding:19px 11px;
     position:relative;
+    margin-bottom: 2px;
 
     
 }

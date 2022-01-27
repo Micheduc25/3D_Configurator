@@ -77,9 +77,8 @@
     });
 
     wz_map.on("error", (e) => {
-      console.log(
-        "Une erreure de connexion est survenue.",
-        Object.keys(e).toString()
+      console.error(
+        "Une erreure de connexion est survenue.", 
       );
     });
   } else {
@@ -101,17 +100,23 @@
       document.querySelector(".marker").style.width = "80px";
       document.querySelector(".marker").style.height = "80px";
       html2canvas(allMap)
-        .then(function (canvas) {
+        .then(
+          
+          /**
+           * 
+           * @param {HTMLCanvasElement} canvas 
+           */
+          function (canvas) {
           //navigate back to main page
-          const imageInput = document.querySelector('#imageData');
+          const imageInput = document.querySelector('#mapImage');
           const locationInput = document.querySelector('#location');
-          imageInput.value = canvas.toDataURL();
-          const currentPosition = marker2.getLngLat() || {lng:2.349014, lat:48.864716};
-          locationInput.value = `Coordonnées (latitude, longitude): ${currentPosition.lat}, ${currentPosition.lng}`;
+          imageInput.value = canvas.toDataURL("image/jpeg");
+          const currentPosition = marker2.getLngLat();
+          locationInput.value = `Coordonnées (latitude, longitude):  ${currentPosition.lat}, ${currentPosition.lng}`;
 
           // var anchorTag = document.createElement("a");
           // document.body.appendChild(anchorTag);
-          //   document.getElementById("previewImg").appendChild(canvas);
+          // document.getElementById("previewImg").appendChild(canvas);
           // anchorTag.download = "map1.jpg";
           // anchorTag.href = canvas.toDataURL();
           // anchorTag.target = "_blank";
@@ -121,10 +126,9 @@
           barrage2.classList.remove("show");
           document.querySelector(".marker").style.width = "50px";
           document.querySelector(".marker").style.height = "50px";
-          wz_map.addControl(geocoder);
+          wz_map.addControl(geocoder);        
           toggleMap(false);
-
-          toggleToast(true, "Emplacement enregistré avec succèss");
+          toggleToast(true, "Emplacement enregistré avec succès");
           setTimeout(()=>{
              toggleToast(false);
           },3000);
@@ -143,6 +147,6 @@ function toggleMap(value=true){
     map.classList.toggle('show',value);
 
     if(value===true)
-    wz_map.resize()
+      wz_map.resize()
 
 }
