@@ -413,7 +413,7 @@
             <p>
                 <label for="pays">Pays</label>
                 <select name="pays" id="pays" value="<?= $_POST['pays'] ?? '' ?>">
-                    <option value=""></option>
+                    <option value="" hidden>Choissisez un pays</option>
                     <option value="france">France</option>
                     <option value="canada">Canada</option>
                     <option value="Suisse">Suisse</option>
